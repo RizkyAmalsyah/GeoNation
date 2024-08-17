@@ -11,7 +11,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+      // Registrasi NegaraInterface dengan implementasi NegaraRepository
+      $this->app->bind(
+        'App\Interfaces\NegaraInterface',
+        'App\Repositories\NegaraRepository'
+    );
     }
 
     /**
