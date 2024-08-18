@@ -22,13 +22,13 @@
     <div class="container">
       <div class="d-flex justify-content-between">
         <h3 class="title fw-bold">Selamat datang di Geomap</h3>
-        <a href="" class="btn btn-primary">
+        <a href="{{ url('datatable') }}" class="btn btn-primary">
           Datatable
         </a>
       </div>
         <div class="card card-example">
             <div class="card-body">
-                <div id="geomap" style="height:60vh;"></div>
+                <div id="geomap" style="height:65vh;"></div>
             </div><!-- card-body -->
         </div><!-- card -->
     </div>
@@ -53,8 +53,7 @@
             url: 'http://localhost:8000/api/negara', // URL endpoint API
             method: 'GET',
             success: function(response) {
-                console.log("Data Negara yang dipanggil API:",
-                response); // Mencetak data negara yang diterima ke konsol
+                console.log("Data Negara yang dipanggil API:", response); // Mencetak data negara yang diterima ke konsol
 
                 let colors = {};
                 let directorateColorMap = {};
