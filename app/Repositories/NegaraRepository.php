@@ -18,6 +18,7 @@ class NegaraRepository implements NegaraInterface
         ->join('kawasan', 'negara.id_kawasan', '=', 'kawasan.id_kawasan')
         ->select(
           'negara.id_negara as id',
+          'negara.kode_negara as kode_negara',
           'negara.nama_negara as country_name',
           'negara.created_at',
           'direktorat.id_direktorat as direktorat_id',
@@ -31,6 +32,7 @@ class NegaraRepository implements NegaraInterface
       $result = $negara->map(function ($item) {
         return [
           'id' => $item->id,
+          'kode_negara' => $item->kode_negara,
           'country_name' => $item->country_name,
           'created_at' => $item->created_at,
           'direktorat' => [
