@@ -2,20 +2,21 @@
 <html lang="en">
 
 <head>
-    <!-- Required meta tags -->
+    <!-- Meta tags untuk karakter set dan responsivitas -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Meta -->
+
+    <!-- Metadata dan favicon -->
     <meta name="description" content="">
     <meta name="author" content="Themepixels">
-    <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="../assets/img/favicon.png">
+
     <title>GeoNation - Datatable</title>
-    <!-- Vendor CSS -->
+
+    <!-- CSS -->
     <link rel="stylesheet" href="/lib/jqvmap/jqvmap.min.css">
     <link rel="stylesheet" href="/lib/datatable/css/datatables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Template CSS -->
     <link rel="stylesheet" href="/assets/css/style.min.css">
 </head>
 
@@ -26,13 +27,11 @@
                 <h3 class="title fw-bold">Selamat datang di Datatable</h3>
                 <a href="{{ url('geomap') }}" class="btn btn-primary">Geomap</a>
             </div>
+
             <h5 class="title">List all Data Negara</h5>
+
             <div class="card card-example">
                 <div class="card-body">
-                    <!-- Tombol Hapus Banyak -->
-                    <div class="d-flex justify-content-end">
-                        <button id="deleteSelectedBtn" class="btn btn-danger mb-3">Hapus Data Terpilih</button>
-                    </div>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-responsive" id="mytable">
                             <thead>
@@ -46,7 +45,7 @@
                                 </tr>
                             </thead>
                             <tbody class="text-center">
-                                <!-- Data akan diisi melalui JavaScript -->
+                                <!-- Data negara akan dimasukkan ke sini oleh JavaScript -->
                             </tbody>
                         </table>
                     </div>
@@ -54,6 +53,8 @@
             </div><!-- card -->
         </div>
     </main>
+
+    <!-- Footer -->
     <footer>
         <div class="container main-footer">
             <span>&copy; 2024. GeoNation. All Rights Reserved.</span>
@@ -68,25 +69,25 @@
     <script>
         // Melakukan permintaan AJAX ke server untuk mendapatkan data negara dari endpoint API
         $.ajax({
-            url: 'http://localhost:8000/api/negara', // URL endpoint API
+            url: 'http://localhost:8000/api/negara',
             method: 'GET',
             success: function(response) {
-                console.log("Data Negara yang dipanggil API:",
-                    response); // Mencetak data negara yang diterima ke konsol
-                let tableBody = $('#mytable tbody'); // Mendapatkan elemen <tbody> dari tabel
+                console.log("Data Negara yang dipanggil API:",response);
 
-                // Melakukan iterasi terhadap setiap objek negara di dalam array response
+                let tableBody = $('#mytable tbody');
+
+                // Iterasi setiap objek negara di dalam array response
                 response.forEach(function(country, index) {
                     let row = `
                       <tr data-id="${country.id}">
-                          <td>${index + 1}</td>
-                          <td>${country.country_name}</td>
-                          <td>${country.region.nama_kawasan}</td>
-                          <td>${country.direktorat.nama_direktorat}</td>
-                          <td>${new Date(country.created_at).toLocaleDateString()}</td>
+                          <td>${index + 1}</td> <!-- Menampilkan nomor urut -->
+                          <td>${country.country_name}</td> <!-- Menampilkan nama negara -->
+                          <td>${country.region.nama_kawasan}</td> <!-- Menampilkan nama kawasan -->
+                          <td>${country.direktorat.nama_direktorat}</td> <!-- Menampilkan nama direktorat -->
+                          <td>${new Date(country.created_at).toLocaleDateString()}</td> <!-- Menampilkan tanggal pembuatan -->
                           <td class="text-center">
                               <div class="d-flex align-items-center justify-content-center">
-                                  <input class="form-check-input me-2 delete-checkbox" type="checkbox" value="${country.id}">
+                                  <!-- Tombol untuk menghapus negara -->
                                   <button class="btn btn-warning delete-btn" data-id="${country.id}">
                                       <i class="fa fa-trash-can text-white" alt="Delete"></i>
                                   </button>
@@ -100,69 +101,31 @@
                 // Menginisialisasi DataTables setelah data dimasukkan ke dalam tabel
                 $('#mytable').DataTable();
 
-                // Menambahkan event listener untuk tombol hapus
+                // Event listener untuk tombol hapus
                 $('.delete-btn').on('click', function() {
-                    let countryId = $(this).data('id');
-                    deleteCountry(countryId);
-                });
-
-                // Event listener untuk tombol hapus banyak
-                $('#deleteSelectedBtn').on('click', function() {
-                    let selectedIds = [];
-                    $('.delete-checkbox:checked').each(function() {
-                        selectedIds.push($(this).val());
-                    });
-
-                    if (selectedIds.length > 0) {
-                        deleteMultipleCountries(selectedIds);
-                    } else {
-                        alert('Pilih data yang ingin dihapus!');
-                    }
+                    let countryId = $(this).data('id'); // Mendapatkan ID negara dari atribut data-id
+                    deleteCountry(countryId); // Memanggil fungsi deleteCountry dengan ID negara
                 });
             },
             error: function(error) {
                 console.error("Gagal mengambil data dari API",
-                    error); // Menampilkan pesan kesalahan jika gagal mengambil data dari API
+                    error); // Logging jika terjadi kesalahan saat mengambil data
             }
         });
 
-        // Fungsi untuk menghapus negara
+        // Fungsi untuk menghapus negara berdasarkan ID
         function deleteCountry(id) {
             if (confirm('Apakah Anda yakin ingin menghapus negara ini?')) {
                 $.ajax({
                     url: `http://localhost:8000/api/negara/${id}`,
-                    method: 'DELETE',
+                    method: 'DELETE', 
                     success: function() {
-                        $(`tr[data-id="${id}"]`).remove(); // Hapus baris tabel yang sesuai
+                        $(`tr[data-id="${id}"]`).remove(); // Menghapus baris tabel yang sesuai setelah berhasil dihapus
                         alert('Negara berhasil dihapus.');
                     },
                     error: function(error) {
-                        console.error('Gagal menghapus negara:', error);
+                        console.error('Gagal menghapus negara:',error); // Logging jika terjadi kesalahan saat menghapus data
                         alert('Gagal menghapus negara.');
-                    }
-                });
-            }
-        }
-
-        // Fungsi untuk menghapus banyak negara
-        function deleteMultipleCountries(ids) {
-            if (confirm('Apakah Anda yakin ingin menghapus data yang dipilih?')) {
-                $.ajax({
-                    url: 'http://localhost:8000/api/negara/bulk-delete',
-                    method: 'POST',
-                    data: JSON.stringify({
-                        ids: ids
-                    }),
-                    contentType: 'application/json',
-                    success: function() {
-                        ids.forEach(id => {
-                            $(`tr[data-id="${id}"]`).remove(); // Hapus baris tabel yang sesuai
-                        });
-                        alert('Data berhasil dihapus.');
-                    },
-                    error: function(error) {
-                        console.error('Gagal menghapus data:', error);
-                        alert('Gagal menghapus data.');
                     }
                 });
             }
